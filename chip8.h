@@ -16,6 +16,8 @@ typedef struct  __chip8{
     uint8_t delay_timer;
     uint8_t sound_timer;
 
+    uint64_t display[32]; //64bit * 32
+
 }CHIP8;
 
 #endif // CHIP8_H

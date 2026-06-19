@@ -16,7 +16,9 @@ typedef struct  __chip8{
     uint8_t delay_timer;
     uint8_t sound_timer;
 
-    uint64_t display[32]; //64bit * 32
+    uint64_t display[32]; //64bit * 32 = 256byte
+
+    uint16_t keypad; //keypad (0 ~ 9, A ~ F)
 
 }CHIP8;
 

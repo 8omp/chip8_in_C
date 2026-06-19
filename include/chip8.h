@@ -2,7 +2,6 @@
 #define CHIP8_H
 
 #include <stdint.h>
-#include <stdbool.h>
 typedef struct  __chip8{
 
     uint8_t memory[4096];

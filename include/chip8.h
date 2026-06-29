@@ -22,4 +22,7 @@ typedef struct  __chip8{
 
 }CHIP8;
 
+void init_chip8(CHIP8 *cpu);
+bool load_rom(CHIP8 *cpu, const char *filename);
+
 #endif // CHIP8_H

@@ -2,6 +2,7 @@
 #define CHIP8_H
 
 #include <stdint.h>
+#include <stdbool.h>
 typedef struct  __chip8{
 
     uint8_t memory[4096];
@@ -20,5 +21,8 @@ typedef struct  __chip8{
     uint16_t keypad; //keypad (0 ~ 9, A ~ F)
 
 }CHIP8;
+
+void init_chip8(CHIP8 *cpu);
+bool load_rom(CHIP8 *cpu, const char *filename);
 
 #endif // CHIP8_H

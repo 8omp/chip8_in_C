@@ -1,5 +1,5 @@
-#include <stdint.h>
 #include <string.h>
+#include <stdio.h>
 
 #include "../include/chip8.h"
 
@@ -53,5 +53,34 @@ void init_chip8(CHIP8 *cpu){
     for(int i = 0; i < 80; i++){
         cpu->memory[i] = fonts[i];
     }
+
+}
+
+bool load_rom(CHIP8 *cpu, const char *filename){
+
+    FILE *fp = fopen(filename, "rb");
+    if(fp == NULL){
+        printf("File open failed.\n");
+        return false;
+    }
+
+    //カーソルを末尾に移動
+    fseek(fp, 0, SEEK_END);
+
+    long rom_size = ftell(fp);
+
+    //カーソルを先頭に移動
+    fseek(fp, 0, SEEK_SET);
+
+    if(rom_size < sizeof(cpu -> memory) - 0x200){
+        size_t read_count = fread(cpu->memory+0x200, sizeof(uint8_t), rom_size, fp);
+    }else{
+        fclose(fp);
+        return false;
+    }
+
+    fclose(fp);
+
+    return true;
 
 }

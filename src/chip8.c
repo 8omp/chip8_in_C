@@ -89,42 +89,167 @@ void emulate_cycle(CHIP8 *cpu){
 
     uint16_t opcode = 0;
 
-    //fetch: 8bitずつ入っているものを、16bitに変換して命令として読めるようにする
+    // fetch: 8bitずつ入っているものを、16bitに変換して命令として読めるようにする
     opcode = (uint16_t)cpu->memory[cpu->pc] << 8 | (uint16_t)cpu->memory[cpu->pc + 1];
     cpu->pc += 2;
 
+    // decode & execute
     switch(opcode & 0xF000){
-        case 0x0000: //まだ分岐アリ
+        case 0x0000:
+            switch(opcode & 0x00FF){
+                // 00E0: disp_clear()
+                case 0x00E0:
+                    break;
+                
+                // 00EE: return;
+                case 0x00EE:
+                    break;
+                
+                // 0NNN: Call
+                default:
+                
+            }
             break;
+        
+        // 1NNN: goto NNN;
         case 0x1000:
             break;
+
+        // 2NNN: call subroutine at NNN;
         case 0x2000:
             break;
+
+        // 3NNN: if(Vx == NN) then skip the next construction
         case 0x3000:
             break;
+
+        // 4NNN: if(Vx != NN) then skip the next construction
         case 0x4000:
             break;
+
+        // 5NNN: if(Vx == Vy) then skip the next construction
         case 0x5000:
             break;
+
+        // 6NNN: Vx = NN
         case 0x6000:
             break;
+
+        // 7NNN: Vx += NN
         case 0x7000:
             break;
-        case 0x8000: //まだ分岐アリ
+
+        case 0x8000:
+            switch(opcode & 0x000F){
+                // 8XY0: Vx = Vy
+                case 0x0000:
+                    break;
+                
+                // 8XY1: Vx |= Vy
+                case 0x0001:
+                    break;
+
+                // 8XY2: Vx &= Vy
+                case 0x0002:
+                    break;
+
+                // 8XY3: Vx ^= Vy
+                case 0x0003:
+                    break;
+
+                // 8XY4: Vx += Vy
+                case 0x0004:
+                    break;
+
+                // 8XY5: Vx -= Vy
+                case 0x0005:
+                    break;
+
+                // 8XY6: Vx >>= 1
+                case 0x0006:
+                    break;
+
+                // 8XY7: Vx = Vy - Vx
+                case 0x0007:
+                    break;
+
+                // 8XYE Vx <<= 1
+                case 0x000E:
+                    break;
+            }
             break;
+
+        // 9XY0: if(Vx != Vy) then skip the next construction
         case 0x9000:
             break;
+
+        // ANNN: I = NNN
         case 0xA000:
             break;
+
+        // BNNN: PC = V0 + NNN
         case 0xB000:
             break;
+
+        // CNNN: Vx = rand() & NN
         case 0xC000:
             break;
+
+        // DXYN: draw(Vx, Vy, N)
         case 0xD000:
             break;
-        case 0xE000: //まだ分岐アリ
+
+        case 0xE000:
+            switch(opcode & 0x00FF){
+                // EX9E: if(key() == Vx) then skip the next construction
+                case 0x009E:
+                    break;
+
+                // EXA1: if(key() != Vx) then skip the next construction
+                case 0x00A1:
+                    break;
+            }
             break;
-        case 0xF000: //まだ分岐アリ
+
+        case 0xF000:
+            switch(opcode & 0x00FF){
+
+                // FX07: Vx = get_delay()
+                case 0x0007:
+                    break;
+
+                // FX0A: Vx = get_key()
+                case 0x000A:
+                    break;
+
+                // FX15: delay_timer(Vx)
+                case 0x0015:
+                    break;
+
+                // FX18: sound_timer(Vx)
+                case 0x0018:
+                    break;
+
+                // FX1E: I += Vx
+                case 0x001E:
+                    break;
+
+                // FX29: I = sprite_addr[Vx]
+                case 0x0029:
+                    break;
+
+                // Fx33: set_BCD(Vx)　*(I+0) = BCD(3);　*(I+1) = BCD(2);　*(I+2) = BCD(1);
+                case 0x0033:
+                    break;
+
+                // FX55: reg_dump(Vx, &I)
+                case 0x0055:
+                    break;
+
+                // FX65: reg_load(Vx, &I)
+                case 0x0065:
+                    break;
+            }
             break;
     }
 

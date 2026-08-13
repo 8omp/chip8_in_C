@@ -84,3 +84,48 @@ bool load_rom(CHIP8 *cpu, const char *filename){
     return true;
 
 }
+
+void emulate_cycle(CHIP8 *cpu){
+
+    uint16_t opcode = 0;
+
+    //fetch: 8bitずつ入っているものを、16bitに変換して命令として読めるようにする
+    opcode = (uint16_t)cpu->memory[cpu->pc] << 8 | (uint16_t)cpu->memory[cpu->pc + 1];
+    cpu->pc += 2;
+
+    switch(opcode & 0xF000){
+        case 0x0000: //まだ分岐アリ
+            break;
+        case 0x1000:
+            break;
+        case 0x2000:
+            break;
+        case 0x3000:
+            break;
+        case 0x4000:
+            break;
+        case 0x5000:
+            break;
+        case 0x6000:
+            break;
+        case 0x7000:
+            break;
+        case 0x8000: //まだ分岐アリ
+            break;
+        case 0x9000:
+            break;
+        case 0xA000:
+            break;
+        case 0xB000:
+            break;
+        case 0xC000:
+            break;
+        case 0xD000:
+            break;
+        case 0xE000: //まだ分岐アリ
+            break;
+        case 0xF000: //まだ分岐アリ
+            break;
+    }
+
+}

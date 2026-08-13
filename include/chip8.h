@@ -7,7 +7,7 @@ typedef struct  __chip8{
 
     uint8_t memory[4096];
     uint16_t I; //index register
-    uint8_t general_register[16];//V0 ~ VF, VFはフラグレジスタ
+    uint8_t V[16];//V0 ~ VF, VFはフラグレジスタ
     uint16_t pc;
 
     uint8_t sp; //stack pointer

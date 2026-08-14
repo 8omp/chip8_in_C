@@ -321,16 +321,25 @@ void emulate_cycle(CHIP8 *cpu){
                     cpu->I = cpu->V[x] * 0x0005;
                     break;
 
-                // Fx33: set_BCD(Vx)　*(I+0) = BCD(3);　*(I+1) = BCD(2);　*(I+2) = BCD(1);
+                // FX33: set_BCD(Vx)　*(I+0) = BCD(3);　*(I+1) = BCD(2);　*(I+2) = BCD(1);
                 case 0x0033:
+                    cpu->memory[cpu->I] = cpu->V[x] & 0x04;
+                    cpu->memory[cpu->I + 1] = cpu->V[x] & 0x02;
+                    cpu->memory[cpu->I + 2] = cpu->V[x] & 0x01;
                     break;
 
                 // FX55: reg_dump(Vx, &I)
                 case 0x0055:
+                    for(int i = 0; i <= x; i++){
+                        cpu->memory[cpu->I + i] = cpu->V[i];
+                    }
                     break;
 
                 // FX65: reg_load(Vx, &I)
                 case 0x0065:
+                    for(int i = 0; i <= x; i++){
+                        cpu->V[i] = cpu->memory[cpu->I + i];
+                    }
                     break;
             }
             break;

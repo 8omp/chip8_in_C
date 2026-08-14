@@ -1,5 +1,6 @@
 #include <string.h>
 #include <stdio.h>
+#include <inttypes.h>
 
 #include "../include/chip8.h"
 
@@ -93,106 +94,166 @@ void emulate_cycle(CHIP8 *cpu){
     opcode = (uint16_t)cpu->memory[cpu->pc] << 8 | (uint16_t)cpu->memory[cpu->pc + 1];
     cpu->pc += 2;
 
+    uint16_t nnn = opcode & 0x0FFF;
+    uint8_t nn = opcode & 0x00FF;
+    uint8_t n = opcode & 0x000F;
+
+    uint8_t x = (opcode & 0x0F00) >> 8;
+    uint8_t y = (opcode & 0x00F0) >> 4;
+
     // decode & execute
     switch(opcode & 0xF000){
         case 0x0000:
             switch(opcode & 0x00FF){
                 // 00E0: disp_clear()
                 case 0x00E0:
+                    memset(cpu->display, 0, sizeof(cpu->display));
                     break;
                 
                 // 00EE: return;
                 case 0x00EE:
+                    cpu->pc = cpu->stack[cpu->sp - 1]; 
+                    cpu->sp--;
                     break;
                 
                 // 0NNN: Call
                 default:
-                
+                //これ要らない
             }
             break;
         
         // 1NNN: goto NNN;
         case 0x1000:
+            cpu->pc = nnn;
             break;
 
         // 2NNN: call subroutine at NNN;
         case 0x2000:
+            cpu->stack[cpu->sp] = cpu->pc;
+            cpu->sp++;
             break;
 
-        // 3NNN: if(Vx == NN) then skip the next construction
+        // 3XNN: if(Vx == NN) then skip the next instruction
         case 0x3000:
+            if(cpu->V[x] == nn){
+                cpu->pc += 2;
+            }
             break;
 
-        // 4NNN: if(Vx != NN) then skip the next construction
+        // 4XNN: if(Vx != NN) then skip the next instruction
         case 0x4000:
+            if(cpu->V[x] != nn){
+                cpu->pc += 2;
+            }
             break;
 
-        // 5NNN: if(Vx == Vy) then skip the next construction
+        // 5XY0: if(Vx == Vy) then skip the next instruction
         case 0x5000:
+            if(cpu->V[x] == cpu->V[y]){
+                cpu->pc += 2;
+            }
             break;
 
-        // 6NNN: Vx = NN
+        // 6XNN: Vx = NN
         case 0x6000:
+            cpu->V[x] = nn;
             break;
 
-        // 7NNN: Vx += NN
+        // 7XNN: Vx += NN
         case 0x7000:
+            cpu->V[x] += nn;
             break;
 
         case 0x8000:
             switch(opcode & 0x000F){
                 // 8XY0: Vx = Vy
                 case 0x0000:
+                    cpu->V[x] = cpu->V[y];
                     break;
                 
                 // 8XY1: Vx |= Vy
                 case 0x0001:
+                    cpu->V[x] |= cpu->V[y];
                     break;
 
                 // 8XY2: Vx &= Vy
                 case 0x0002:
+                    cpu->V[x] &= cpu->V[y];
                     break;
 
                 // 8XY3: Vx ^= Vy
                 case 0x0003:
+                    cpu->V[x] ^= cpu->V[y];
                     break;
 
                 // 8XY4: Vx += Vy
                 case 0x0004:
+                    if(cpu->V[x] + cpu->V[y] > 0xFF){
+                        cpu->V[0xF] = 1;
+                    }else{
+                        cpu->V[0xF] = 0;
+                    }
+                    cpu->V[x] += cpu->V[y];
                     break;
 
                 // 8XY5: Vx -= Vy
                 case 0x0005:
+                    if(cpu->V[x] >= cpu->V[y]){
+                        cpu->V[0xF] = 1;
+                    }else{
+                        cpu->V[0xF] = 0;
+                    }
+                    cpu->V[x] -= cpu->V[y];
                     break;
 
                 // 8XY6: Vx >>= 1
                 case 0x0006:
+                    cpu->V[0xF] = cpu->V[x] & 0x01;
+                    cpu->V[x] >>= 1;
                     break;
 
                 // 8XY7: Vx = Vy - Vx
                 case 0x0007:
+                    if(cpu->V[y] >= cpu->V[x]){
+                        cpu->V[0xF] = 1;
+                    }else{
+                        cpu->V[0xF] = 0;
+                    }
+                    cpu->V[x] = cpu->V[y] - cpu->V[x];
                     break;
 
                 // 8XYE Vx <<= 1
                 case 0x000E:
+                    if(cpu->V[x] & 0x80){
+                        cpu->V[0xF] = 1;
+                    }else{
+                        cpu->V[0xF] = 0;
+                    }
+                    cpu->V[x] <<= 1;
                     break;
             }
             break;
 
-        // 9XY0: if(Vx != Vy) then skip the next construction
+        // 9XY0: if(Vx != Vy) then skip the next instruction
         case 0x9000:
+            if(cpu->V[x] != cpu->V[y]){
+                cpu->pc += 2;
+            }
             break;
 
         // ANNN: I = NNN
         case 0xA000:
+            cpu->I = nnn;
             break;
 
         // BNNN: PC = V0 + NNN
         case 0xB000:
+            cpu->pc = cpu->V[0] + nnn;
             break;
 
         // CNNN: Vx = rand() & NN
         case 0xC000:
+            cpu->V[x] = (rand() & 0xFF) & nn;
             break;
 
         // DXYN: draw(Vx, Vy, N)
@@ -201,12 +262,19 @@ void emulate_cycle(CHIP8 *cpu){
 
         case 0xE000:
             switch(opcode & 0x00FF){
-                // EX9E: if(key() == Vx) then skip the next construction
+                // EX9E: if(key() == Vx) then skip the next instruction
                 case 0x009E:
+                    //0000 0000 0000 0001を左にV[x]回だけシフトする
+                    if(cpu->keypad & (0x0001 << cpu->V[x])){
+                        cpu->pc += 2;
+                    }
                     break;
 
-                // EXA1: if(key() != Vx) then skip the next construction
+                // EXA1: if(key() != Vx) then skip the next instruction
                 case 0x00A1:
+                    if(!(cpu->keypad & (0x0001 << cpu->V[x]))){
+                        cpu->pc += 2;
+                    }
                     break;
             }
             break;
@@ -216,22 +284,28 @@ void emulate_cycle(CHIP8 *cpu){
 
                 // FX07: Vx = get_delay()
                 case 0x0007:
+                    cpu->V[x] = cpu->delay_timer;
                     break;
 
                 // FX0A: Vx = get_key()
                 case 0x000A:
+                    scanf("%" SCNd16, &cpu->keypad);
+                    cpu->V[y] = cpu->keypad;
                     break;
 
                 // FX15: delay_timer(Vx)
                 case 0x0015:
+                    cpu->delay_timer = cpu->V[x];
                     break;
 
                 // FX18: sound_timer(Vx)
                 case 0x0018:
+                    cpu->sound_timer = cpu->V[x];
                     break;
 
                 // FX1E: I += Vx
                 case 0x001E:
+                    cpu->I += cpu->V[x];
                     break;
 
                 // FX29: I = sprite_addr[Vx]

@@ -289,8 +289,16 @@ void emulate_cycle(CHIP8 *cpu){
 
                 // FX0A: Vx = get_key()
                 case 0x000A:
-                    scanf("%" SCNd16, &cpu->keypad);
-                    cpu->V[y] = cpu->keypad;
+                    if(!(cpu->keypad & 0xFFFF)){
+                        cpu->pc -= 2;
+                    }else{
+                        for(int i = 0; i <= 15; i++){
+                            if(cpu->keypad & 0x0001 << i){
+                                cpu->V[x] = i;
+                                break;
+                            }
+                        }
+                    }
                     break;
 
                 // FX15: delay_timer(Vx)

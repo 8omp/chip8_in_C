@@ -318,6 +318,7 @@ void emulate_cycle(CHIP8 *cpu){
 
                 // FX29: I = sprite_addr[Vx]
                 case 0x0029:
+                    cpu->I = cpu->V[x] * 0x0005;
                     break;
 
                 // Fx33: set_BCD(Vx)　*(I+0) = BCD(3);　*(I+1) = BCD(2);　*(I+2) = BCD(1);

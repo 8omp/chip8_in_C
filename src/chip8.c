@@ -258,6 +258,7 @@ void emulate_cycle(CHIP8 *cpu){
 
         // DXYN: draw(Vx, Vy, N)
         case 0xD000:
+
             break;
 
         case 0xE000:
@@ -293,7 +294,7 @@ void emulate_cycle(CHIP8 *cpu){
                         cpu->pc -= 2;
                     }else{
                         for(int i = 0; i <= 15; i++){
-                            if(cpu->keypad & 0x0001 << i){
+                            if(cpu->keypad & (0x0001 << i)){
                                 cpu->V[x] = i;
                                 break;
                             }
@@ -323,9 +324,9 @@ void emulate_cycle(CHIP8 *cpu){
 
                 // FX33: set_BCD(Vx)　*(I+0) = BCD(3);　*(I+1) = BCD(2);　*(I+2) = BCD(1);
                 case 0x0033:
-                    cpu->memory[cpu->I] = cpu->V[x] & 0x04;
-                    cpu->memory[cpu->I + 1] = cpu->V[x] & 0x02;
-                    cpu->memory[cpu->I + 2] = cpu->V[x] & 0x01;
+                    cpu->memory[cpu->I] = cpu->V[x] / 100;
+                    cpu->memory[cpu->I + 1] = (cpu->V[x] / 10) % 10;
+                    cpu->memory[cpu->I + 2] = (cpu->V[x] % 100) % 10;
                     break;
 
                 // FX55: reg_dump(Vx, &I)

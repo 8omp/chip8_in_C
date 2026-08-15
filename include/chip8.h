@@ -24,5 +24,6 @@ typedef struct  __chip8{
 
 void init_chip8(CHIP8 *cpu);
 bool load_rom(CHIP8 *cpu, const char *filename);
+void emulate_cycle(CHIP8 *cpu);
 
 #endif // CHIP8_H

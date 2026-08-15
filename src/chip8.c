@@ -326,7 +326,7 @@ void emulate_cycle(CHIP8 *cpu){
                 case 0x0033:
                     cpu->memory[cpu->I] = cpu->V[x] / 100;
                     cpu->memory[cpu->I + 1] = (cpu->V[x] / 10) % 10;
-                    cpu->memory[cpu->I + 2] = (cpu->V[x] % 100) % 10;
+                    cpu->memory[cpu->I + 2] = cpu->V[x] % 10;
                     break;
 
                 // FX55: reg_dump(Vx, &I)

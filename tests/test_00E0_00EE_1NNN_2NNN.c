@@ -1,3 +1,5 @@
+//2204 1202 00E0 00EEでテスト
+
 #include <stdio.h>
 #include "../include/chip8.h"
 

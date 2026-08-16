@@ -126,8 +126,8 @@ void emulate_cycle(CHIP8 *cpu){
 
         // 2NNN: call subroutine at NNN;
         case 0x2000:
-            cpu->pc = nnn;
             cpu->stack[cpu->sp] = cpu->pc;
+            cpu->pc = nnn; //これでcall
             cpu->sp++;
             break;
 

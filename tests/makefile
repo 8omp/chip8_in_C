@@ -1,5 +1,5 @@
 # ここを毎度書き換える
-TEST_FILE = test_00E0_00EE_2NNN.c
+TEST_FILE = test_00E0_00EE_1NNN_2NNN.c
 
 # 出来上がる実行ファイルの名前
 TARGET = run_test

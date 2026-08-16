@@ -116,9 +116,6 @@ void emulate_cycle(CHIP8 *cpu){
                     cpu->sp--;
                     break;
                 
-                // 0NNN: Call
-                default:
-                //これ要らない
             }
             break;
         

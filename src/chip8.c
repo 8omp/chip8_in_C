@@ -249,7 +249,7 @@ void emulate_cycle(CHIP8 *cpu){
             cpu->pc = cpu->V[0] + nnn;
             break;
 
-        // CNNN: Vx = rand() & NN
+        // CXNN: Vx = rand() & NN
         case 0xC000:
             cpu->V[x] = (rand() & 0xFF) & nn;
             break;

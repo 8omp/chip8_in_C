@@ -7,16 +7,17 @@ const int WINDOW_HEIGHT = 512;
 
 static SDL_Window* window = NULL;
 static SDL_Renderer* renderer = NULL;
+
 bool is_running = true;
 
 int main(int argc, char* argv[]){
 
-    if(SDL_Init(SDL_INIT_EVERYTHING) != 0){
+    if(SDL_Init(SDL_INIT_VIDEO) != 0){
         printf("SDLの初期化に失敗。error: %s\n", SDL_GetError());
         return -1;
     }
 
-    window = SDL_CreateWindow(u8"SDL2テスト", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WINDOW_WIDTH, WINDOW_HEIGHT, SDL_WINDOW_OPENGL);
+    window = SDL_CreateWindow(u8"SDL2テスト", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WINDOW_WIDTH, WINDOW_HEIGHT, SDL_WINDOW_SHOWN);
     if(window == NULL){
         printf("ウィンドウの初期化に失敗。error: %s", SDL_GetError());
         return -1;
@@ -29,8 +30,14 @@ int main(int argc, char* argv[]){
     }
 
     while(is_running){
-
+        SDL_Event event;
+        while(SDL_PollEvent(&event)){
+            if(event.type == SDL_QUIT){
+                is_running = false;
+            }
+        }
     }
+
     SDL_DestroyWindow(window);
     SDL_DestroyRenderer(renderer);
     SDL_Quit();

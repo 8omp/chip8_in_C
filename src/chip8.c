@@ -261,24 +261,25 @@ void emulate_cycle(CHIP8 *cpu){
             cpu->V[0xF] = 0;
 
             for(int row = 0; row < n; row++){
-                if(Y + row > 32){
+                if(Y + row > 31){
                     break;
                 }
+                
                 uint8_t dot = cpu->memory[cpu->I + row];
 
                 for(int col = 0; col < 8; col++){
-                    if(X + col > 64){
+                    if(X + col > 63){
                         break;
                     }
                     //1000 0000を右にcol回シフトして、dotの該当ビットと等しいか確認
                     if(dot & (0x80 >> col)){
                         // ...0001を左に63 - X回シフト
-                        if(cpu->display[Y] & (1ULL << 63 - X + col)){
+                        if(cpu->display[Y + row] & (1ULL << (63 - (X + col)))){
                             cpu->V[0xF] = 1;
                         }
                         
                         //描画処理: 該当箇所をXORで反転
-                        cpu->display[Y] ^= 1ULL << 63 - X + col;
+                        cpu->display[Y + row] ^= 1ULL << (63 - (X + col));
                     }
                 }
             }

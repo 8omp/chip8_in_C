@@ -1,5 +1,6 @@
 #include <string.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <inttypes.h>
 
 #include "../include/chip8.h"
@@ -264,7 +265,7 @@ void emulate_cycle(CHIP8 *cpu){
                 if(Y + row > 31){
                     break;
                 }
-                
+
                 uint8_t dot = cpu->memory[cpu->I + row];
 
                 for(int col = 0; col < 8; col++){

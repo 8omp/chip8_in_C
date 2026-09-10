@@ -24,7 +24,7 @@ int main(void){
     struct __chip8 cpu;
     init_chip8(&cpu);
 
-    char *filename = "../roms/IBM_Logo.ch8";
+    char *filename = "../roms/chip8-test-rom.ch8";
 
     if(load_rom(&cpu, filename)){
         printf("Load success!\n");

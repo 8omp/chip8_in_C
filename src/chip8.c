@@ -91,8 +91,6 @@ bool load_rom(CHIP8 *cpu, const char *filename){
 
 void emulate_cycle(CHIP8 *cpu){
 
-    cpu->isdraw = false;
-
     uint16_t opcode = 0;
 
     // fetch: 8bitずつ入っているものを、16bitに変換して命令として読めるようにする

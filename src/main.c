@@ -29,7 +29,7 @@ int main(int argc, char *argv[])
     struct __chip8 cpu;
     init_chip8(&cpu);
 
-    char *filename = "../roms/IBM_Logo.ch8";
+    char *filename = argv[1];
 
     // Init SDL
     if (SDL_Init(SDL_INIT_VIDEO) != 0)

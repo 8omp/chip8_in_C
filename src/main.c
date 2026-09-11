@@ -31,13 +31,14 @@ int main(int argc, char *argv[])
 
     char *filename = "../roms/IBM_Logo.ch8";
 
-    // SDLの初期化とwindow, renderer, textureの作成
+    // Init SDL
     if (SDL_Init(SDL_INIT_VIDEO) != 0)
     {
         printf("SDL Init failed. error: %s\n", SDL_GetError());
         return -1;
     }
 
+    // Create window
     SDL_Window *window = SDL_CreateWindow(u8"chip8 emulator", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WIDTH, HEIGHT, SDL_WINDOW_SHOWN);
     if (window == NULL)
     {
@@ -45,6 +46,7 @@ int main(int argc, char *argv[])
         return -1;
     }
 
+    // Create renderer
     SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
     if (renderer == NULL)
     {
@@ -52,6 +54,7 @@ int main(int argc, char *argv[])
         return -1;
     }
 
+    // Create texture
     SDL_Texture *texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STREAMING, 64, 32);
     if (texture == NULL)
     {
@@ -93,7 +96,8 @@ int main(int argc, char *argv[])
                     return 0;
                     break;
 
-                case SDLK_F1:
+                // F1 to reload
+                case SDLK_F1: 
                     init_chip8(&cpu);
                     if (load_rom(&cpu, filename))
                     {
@@ -101,6 +105,7 @@ int main(int argc, char *argv[])
                     }
                     break;
 
+                // keypadに該当のキーを追加
                 default:
                     for (int i = 0; i < 16; i++)
                     {
@@ -114,6 +119,7 @@ int main(int argc, char *argv[])
                 }
                 break;
 
+            // keypadから該当のキーを削除
             case SDL_KEYUP:
                 for (int i = 0; i < 16; i++)
                 {
@@ -124,9 +130,14 @@ int main(int argc, char *argv[])
                     }
                 }
             }
+
+            if(cpu.isdraw){
+
+            }
         }
     }
 
+    // Cleanup
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     SDL_Quit();

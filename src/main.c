@@ -53,6 +53,7 @@ int main(int argc, char *argv[])
         printf("renderer init failed. error: %s", SDL_GetError());
         return -1;
     }
+    SDL_RenderSetLogicalSize(renderer, WIDTH, HEIGHT);
 
     // Create texture
     SDL_Texture *texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STREAMING, 64, 32);
@@ -97,7 +98,7 @@ int main(int argc, char *argv[])
                     break;
 
                 // F1 to reload
-                case SDLK_F1: 
+                case SDLK_F1:
                     init_chip8(&cpu);
                     if (load_rom(&cpu, filename))
                     {
@@ -130,11 +131,49 @@ int main(int argc, char *argv[])
                     }
                 }
             }
-
-            if(cpu.isdraw){
-
-            }
         }
+
+        if (cpu.isdraw)
+        {
+            // 32bitが横に64個、それが縦に32個並んでいる。
+            uint32_t pixels[32][64];
+
+            for (int i = 0; i < 32; i++)
+            {
+                for (int j = 0; j < 64; j++)
+                {
+                    if (cpu.display[i] & (1ULL << (63 - j)))
+                    {
+                        pixels[i][j] = 0xFFFFFFFF;
+                    }
+                    else
+                    {
+                        pixels[i][j] = 0x000000FF;
+                    }
+                }
+            }
+
+            // texture update
+            if (SDL_UpdateTexture(texture, NULL, pixels, sizeof(uint32_t) * 64) != 0)
+            {
+                printf("texture update failed. error: %s\n", SDL_GetError());
+            }
+            else
+            {
+                printf("texture update succeed!!\n");
+            }
+
+            // textureをrendererに渡す
+            SDL_RenderClear(renderer);
+            SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+            SDL_RenderCopy(renderer, texture, NULL, NULL);
+            SDL_RenderPresent(renderer);
+
+            cpu.isdraw = false;
+            printf("success\n");
+        }
+
+        SDL_Delay(2);
     }
 
     // Cleanup

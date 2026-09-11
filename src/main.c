@@ -87,14 +87,42 @@ int main(int argc, char *argv[])
                 break;
 
             case SDL_KEYDOWN:
-                switch(event.key.keysym.sym){
-                    case SDLK_F1:
-                        if(load_rom(&cpu, filename)){
-                            printf("reload!!\n");
+                switch (event.key.keysym.sym)
+                {
+                case SDLK_ESCAPE:
+                    return 0;
+                    break;
+
+                case SDLK_F1:
+                    init_chip8(&cpu);
+                    if (load_rom(&cpu, filename))
+                    {
+                        printf("reload!!\n");
+                    }
+                    break;
+
+                default:
+                    for (int i = 0; i < 16; i++)
+                    {
+                        if (event.key.keysym.sym == keyboard[i])
+                        {
+                            cpu.keypad |= (0x0001 << i);
+                            break;
                         }
-                        break;
+                    }
+                    break;
                 }
                 break;
+
+            case SDL_KEYUP:
+                for (int i = 0; i < 16; i++)
+                {
+                    if (event.key.keysym.sym == keyboard[i])
+                    {
+                        cpu.keypad &= ~(0x0001 << i);
+                        break;
+                    }
+                }
             }
         }
     }

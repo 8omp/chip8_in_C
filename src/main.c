@@ -160,10 +160,6 @@ int main(int argc, char *argv[])
             {
                 printf("texture update failed. error: %s\n", SDL_GetError());
             }
-            else
-            {
-                printf("texture update succeed!!\n");
-            }
 
             // textureをrendererに渡す
             SDL_RenderClear(renderer);
@@ -171,13 +167,17 @@ int main(int argc, char *argv[])
             SDL_RenderPresent(renderer);
 
             cpu.isdraw = false;
-            printf("success\n");
         }
 
         int loop_end = SDL_GetTicks();
         if(loop_end - loop_start >= TIMERS){
-            cpu.sound_timer--;
-            cpu.delay_timer--;
+
+            if(cpu.sound_timer >= 0){
+                cpu.sound_timer--;
+            }
+            if(cpu.delay_timer >= 0){
+                cpu.delay_timer--;
+            }
 
             loop_start = SDL_GetTicks();
         }

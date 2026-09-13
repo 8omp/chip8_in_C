@@ -4,6 +4,7 @@
 
 #define WIDTH 1024
 #define HEIGHT 512
+#define TIMERS 1000/60
 
 uint8_t keyboard[16] = {
     SDLK_x, // 0
@@ -75,10 +76,11 @@ int main(int argc, char *argv[])
     }
 
     bool isrunning = true;
+    int loop_start = SDL_GetTicks();
 
     // Emulation loop
     while (isrunning)
-    {
+    {   
         emulate_cycle(&cpu);
 
         SDL_Event event;
@@ -144,11 +146,11 @@ int main(int argc, char *argv[])
                 {
                     if (cpu.display[i] & (1ULL << (63 - j)))
                     {
-                        pixels[i][j] = 0xFFFFFFFF;
+                        pixels[i][j] = 0xFFFFFFFF; // 白
                     }
                     else
                     {
-                        pixels[i][j] = 0x000000FF;
+                        pixels[i][j] = 0x000000FF; // 黒
                     }
                 }
             }
@@ -165,12 +167,19 @@ int main(int argc, char *argv[])
 
             // textureをrendererに渡す
             SDL_RenderClear(renderer);
-            SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
             SDL_RenderCopy(renderer, texture, NULL, NULL);
             SDL_RenderPresent(renderer);
 
             cpu.isdraw = false;
             printf("success\n");
+        }
+
+        int loop_end = SDL_GetTicks();
+        if(loop_end - loop_start >= TIMERS){
+            cpu.sound_timer--;
+            cpu.delay_timer--;
+
+            loop_start = SDL_GetTicks();
         }
 
         SDL_Delay(2);

@@ -20,6 +20,8 @@ typedef struct  __chip8{
 
     uint16_t keypad; //keypad (0 ~ 9, A ~ F)
 
+    bool isdraw;
+
 }CHIP8;
 
 void init_chip8(CHIP8 *cpu);

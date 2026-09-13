@@ -1,3 +1,5 @@
+FILES = main.c
+
 # 出来上がる実行ファイルの名前
 TARGET = chip8
 
@@ -6,7 +8,7 @@ CC = gcc
 CFLAGS = -Wall -I ../include/
 
 # コンパイルする対象
-SRCS = test_sdl.c chip8.c
+SRCS = $(FILES) chip8.c
 
 # コマンド
 all:

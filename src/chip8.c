@@ -56,6 +56,8 @@ void init_chip8(CHIP8 *cpu){
         cpu->memory[i] = fonts[i];
     }
 
+    cpu->isdraw = false;
+
 }
 
 bool load_rom(CHIP8 *cpu, const char *filename){
@@ -109,6 +111,7 @@ void emulate_cycle(CHIP8 *cpu){
                 // 00E0: disp_clear()
                 case 0x00E0:
                     memset(cpu->display, 0, sizeof(cpu->display));
+                    cpu->isdraw = true;
                     break;
                 
                 // 00EE: return;
@@ -284,6 +287,8 @@ void emulate_cycle(CHIP8 *cpu){
                     }
                 }
             }
+
+            cpu->isdraw = true;
 
             break;
 

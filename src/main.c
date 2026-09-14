@@ -33,7 +33,7 @@ int main(int argc, char *argv[])
     char *filename = argv[1];
 
     // Init SDL
-    if (SDL_Init(SDL_INIT_VIDEO) != 0)
+    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) != 0)
     {
         printf("SDL Init failed. error: %s\n", SDL_GetError());
         SDL_Quit();
@@ -75,13 +75,49 @@ int main(int argc, char *argv[])
     }
 
     // Create audio
+    SDL_AudioSpec desired;
+    memset(&desired, 0, sizeof(SDL_AudioSpec));
+    desired.freq = 44100;
+    desired.format = AUDIO_S16SYS;
+    desired.channels = 1;
+    desired.samples = 2048;
+    desired.callback = NULL;
+
     SDL_AudioDeviceID audio = SDL_OpenAudioDevice(NULL, 0, &desired, NULL, 0);
     if (audio == 0)
     {
-        printf("audio open failed. error: %s", SDL_GetError());
+        printf("audio open failed. error: %s\n", SDL_GetError());
         SDL_DestroyWindow(window);
         SDL_DestroyRenderer(renderer);
         SDL_DestroyTexture(texture);
+        SDL_CloseAudioDevice(audio);
+        SDL_Quit();
+        return -1;
+    }
+
+    // Create wav data and add queue
+    int16_t data[44100];
+    int count = 0;
+    for(int i = 0; i < 44100; i++){
+        if(count < 50){
+            data[i] = 3000;
+        }else{
+            data[i] = -3000;
+        }
+
+        count++;
+
+        if(count >= 50){
+            count = 0;
+        }
+    }
+
+    if (SDL_QueueAudio(audio, data, sizeof(int16_t) * 44100) != 0)
+    {
+        printf("audio queue failed. error: %s", SDL_GetError());
+        SDL_DestroyTexture(texture);
+        SDL_DestroyRenderer(renderer);
+        SDL_DestroyWindow(window);
         SDL_CloseAudioDevice(audio);
         SDL_Quit();
         return -1;
@@ -105,7 +141,9 @@ int main(int argc, char *argv[])
     while (isrunning)
     {
         emulate_cycle(&cpu);
-        SDL_PauseAudioDevice(audio, 0);
+        if(cpu.sound_timer > 0){
+            SDL_PauseAudioDevice(audio, 0);
+        }
 
         SDL_Event event;
         while (SDL_PollEvent(&event))

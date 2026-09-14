@@ -36,6 +36,7 @@ int main(int argc, char *argv[])
     if (SDL_Init(SDL_INIT_VIDEO) != 0)
     {
         printf("SDL Init failed. error: %s\n", SDL_GetError());
+        SDL_Quit();
         return -1;
     }
 
@@ -44,6 +45,8 @@ int main(int argc, char *argv[])
     if (window == NULL)
     {
         printf("window init failed. error: %s", SDL_GetError());
+        SDL_DestroyWindow(window);
+        SDL_Quit();
         return -1;
     }
 
@@ -52,6 +55,9 @@ int main(int argc, char *argv[])
     if (renderer == NULL)
     {
         printf("renderer init failed. error: %s", SDL_GetError());
+        SDL_DestroyWindow(window);
+        SDL_DestroyRenderer(renderer);
+        SDL_Quit();
         return -1;
     }
     SDL_RenderSetLogicalSize(renderer, WIDTH, HEIGHT);
@@ -61,15 +67,23 @@ int main(int argc, char *argv[])
     if (texture == NULL)
     {
         printf("renderer init failed. error: %s", SDL_GetError());
+        SDL_DestroyWindow(window);
+        SDL_DestroyRenderer(renderer);
+        SDL_DestroyTexture(texture);
+        SDL_Quit();
         return -1;
     }
 
-    // Create Audio
-    SDL_AudioSpec desired;
+    // Create audio
     SDL_AudioDeviceID audio = SDL_OpenAudioDevice(NULL, 0, &desired, NULL, 0);
     if (audio == 0)
     {
         printf("audio open failed. error: %s", SDL_GetError());
+        SDL_DestroyWindow(window);
+        SDL_DestroyRenderer(renderer);
+        SDL_DestroyTexture(texture);
+        SDL_CloseAudioDevice(audio);
+        SDL_Quit();
         return -1;
     }
 
@@ -204,9 +218,9 @@ int main(int argc, char *argv[])
     }
 
     // Cleanup
+    SDL_DestroyTexture(texture);
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
-    SDL_DestroyTexture(texture);
     SDL_CloseAudioDevice(audio);
     SDL_Quit();
 

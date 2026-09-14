@@ -4,7 +4,7 @@
 
 #define WIDTH 1024
 #define HEIGHT 512
-#define TIMERS 1000/60
+#define TIMERS 1000 / 60
 
 uint8_t keyboard[16] = {
     SDLK_x, // 0
@@ -64,6 +64,15 @@ int main(int argc, char *argv[])
         return -1;
     }
 
+    // Create Audio
+    SDL_AudioSpec desired;
+    SDL_AudioDeviceID audio = SDL_OpenAudioDevice(NULL, 0, &desired, NULL, 0);
+    if (audio == 0)
+    {
+        printf("audio open failed. error: %s", SDL_GetError());
+        return -1;
+    }
+
     // Load rom
     if (load_rom(&cpu, filename))
     {
@@ -80,8 +89,9 @@ int main(int argc, char *argv[])
 
     // Emulation loop
     while (isrunning)
-    {   
+    {
         emulate_cycle(&cpu);
+        SDL_PauseAudioDevice(audio, 0);
 
         SDL_Event event;
         while (SDL_PollEvent(&event))
@@ -170,16 +180,24 @@ int main(int argc, char *argv[])
         }
 
         int loop_end = SDL_GetTicks();
-        if(loop_end - loop_start >= TIMERS){
+        if (loop_end - loop_start >= TIMERS)
+        {
 
-            if(cpu.sound_timer >= 0){
+            if (cpu.sound_timer > 0)
+            {
                 cpu.sound_timer--;
             }
-            if(cpu.delay_timer >= 0){
+            if (cpu.delay_timer > 0)
+            {
                 cpu.delay_timer--;
             }
 
             loop_start = SDL_GetTicks();
+        }
+
+        if (cpu.sound_timer == 0)
+        {
+            SDL_PauseAudioDevice(audio, 1);
         }
 
         SDL_Delay(2);
@@ -188,6 +206,8 @@ int main(int argc, char *argv[])
     // Cleanup
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
+    SDL_DestroyTexture(texture);
+    SDL_CloseAudioDevice(audio);
     SDL_Quit();
 
     return 0;

@@ -98,16 +98,21 @@ int main(int argc, char *argv[])
     // Create wav data and add queue
     int16_t data[44100];
     int count = 0;
-    for(int i = 0; i < 44100; i++){
-        if(count < 50){
+    for (int i = 0; i < 44100; i++)
+    {
+        if (count < 50)
+        {
             data[i] = 3000;
-        }else{
+        }
+        else
+        {
             data[i] = -3000;
         }
 
         count++;
 
-        if(count >= 50){
+        if (count >= 50)
+        {
             count = 0;
         }
     }
@@ -141,8 +146,17 @@ int main(int argc, char *argv[])
     while (isrunning)
     {
         emulate_cycle(&cpu);
-        if(cpu.sound_timer > 0){
+
+        if(SDL_GetQueuedAudioSize(audio) < sizeof(data)){
+            SDL_QueueAudio(audio, data, sizeof(data));
+        }
+        if (cpu.sound_timer > 0)
+        {
             SDL_PauseAudioDevice(audio, 0);
+        }
+        else
+        {
+            SDL_PauseAudioDevice(audio, 1);
         }
 
         SDL_Event event;
@@ -245,11 +259,6 @@ int main(int argc, char *argv[])
             }
 
             loop_start = SDL_GetTicks();
-        }
-
-        if (cpu.sound_timer == 0)
-        {
-            SDL_PauseAudioDevice(audio, 1);
         }
 
         SDL_Delay(2);

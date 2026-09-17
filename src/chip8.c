@@ -264,6 +264,7 @@ void emulate_cycle(CHIP8 *cpu){
             uint8_t Y = cpu->V[y] & 31;
             cpu->V[0xF] = 0;
 
+            // 縦N行, 横8ピクセルのブロックを描画
             for(int row = 0; row < n; row++){
                 if(Y + row > 31){
                     break;

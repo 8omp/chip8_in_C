@@ -77,7 +77,7 @@ bool load_rom(CHIP8 *cpu, const char *filename){
     fseek(fp, 0, SEEK_SET);
 
     if(rom_size < sizeof(cpu -> memory) - 0x200){
-        size_t read_count = fread(cpu->memory+0x200, sizeof(uint8_t), rom_size, fp);
+        fread(cpu->memory+0x200, sizeof(uint8_t), rom_size, fp);
     }else{
         fclose(fp);
         return false;

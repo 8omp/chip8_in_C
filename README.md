@@ -32,7 +32,7 @@ CHIP-8 Keypad            PC Keyboard
 ## Dependencies
 
 To build and run this emulator, you need:
-- GCC (or any standard C compiler)
+- GCC and Make(or `build-essential` on Debian/Ubuntu)
 - SDL2 (`libsdl2-dev`)
 - A Linux environment (Developed on WSL2 / Ubuntu)
 

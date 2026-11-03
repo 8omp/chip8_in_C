@@ -31,7 +31,8 @@ int main(int argc, char *argv[])
     init_chip8(&cpu);
 
     if(argc != 2){
-        fprintf(stderr, "Usage: %s ./roms/<ROM>", argv[0]);
+        fprintf(stderr, "Usage: %s ./roms/<ROM>\n", argv[0]);
+        return 1;
     }
     char *filename = argv[1];
 

@@ -30,6 +30,9 @@ int main(int argc, char *argv[])
     struct __chip8 cpu;
     init_chip8(&cpu);
 
+    if(argc != 2){
+        fprintf(stderr, "Usage: %s ./roms/<ROM>", argv[0]);
+    }
     char *filename = argv[1];
 
     // Init SDL
